@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+  <!-- Map view for camping -->
+  <record id="camping_map_view" model="ir.ui.view">
+      <field name="name">camping.camping_map</field>
+      <field name="model">camping</field>
+      <field name="inherit_id" ref="camping.camping_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='camping_place_ids']" position="before">
+              <button class="btn-link" type="object" string="Show camping places in map" name="show_places_map" icon="fa-arrow-right"/>
+          </xpath>
+          <!--Modif 15 erreur<notebook>
+              <page string="Default geometry for places and parcs">
+                  <field name="x_default_geom" colspan="4"
+                         widget="geo_edit_map"/>
+              </page>
+          </notebook>-->
+      </field>
+  </record>
+
+  <!-- Map view for camping place -->
+  <record id="camping_place_map_view" model="ir.ui.view">
+      <field name="name">camping.camping_place_map</field>
+      <field name="model">camping.place</field>
+      <field name="inherit_id" ref="camping.camping_location_form"/>
+      <field name="arch" type="xml">
+        <notebook>
+              <page string="Geoengine Map">
+                  <field name="x_the_geom" colspan="4"
+                         widget="geo_edit_map"/>
+              </page>
+        </notebook>
+      </field>
+  </record>
+
+  <record id="geoengine_view_camping_place_action" model="ir.actions.act_window">
+    <field name="name">Places</field>
+    <field name="res_model">camping.place</field>
+    <field name="view_mode">tree,form,geoengine</field>
+    <!-- modif 13<field name="view_type">form</field>-->
+  </record>
+
+  <menuitem id="camping.menu_places" name="Places"
+    parent="camping.menu_camping_root"  sequence="120"
+    action="geoengine_view_camping_place_action" groups="camping.group_camping_user"/>
+
+
+  <!-- Map view for camping parc -->
+  <record id="camping_parc_map_view" model="ir.ui.view">
+      <field name="name">camping.camping_parc_map</field>
+      <field name="model">camping.parc</field>
+      <field name="inherit_id" ref="camping.camping_parc_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='zone']" position="after">
+                  <field name="x_the_geom" colspan="4"
+                         widget="geo_edit_map"/>
+          </xpath>
+      </field>
+  </record>
+
+  <record id="geoengine_view_camping_parc_action" model="ir.actions.act_window">
+        <field name="name">Parcs</field>
+        <field name="res_model">camping.parc</field>
+        <field name="view_mode">tree,form,geoengine</field>
+        <!-- modif 13<field name="view_type">form</field>-->
+  </record>
+
+  <menuitem id="camping.menu_parcs" name="Parcs"
+        parent="camping.menu_camping_root"  sequence="121"
+        action="geoengine_view_camping_parc_action" groups="camping.group_camping_user"/>
+
+
+  <!-- GeoEngine views -->
+  <!-- Camping -->
+
+  <record id="ir_ui_view_campingview0" model="ir.ui.view">
+    <field name="name">Camping map view</field>
+    <field name="model">camping</field>
+    <field name="arch" type="xml">
+      <geoengine>
+        <field name="x_the_point"/>
+      </geoengine>
+    </field>
+  </record>
+
+  <record id="geoengine_raster_layer_camping_osm" model="geoengine.raster.layer">
+    <field name="raster_type">osm</field>
+    <field name="name">Open Street Map</field>
+    <field name="view_id" ref="ir_ui_view_campingview0"/>
+    <field eval="0" name="overlay"/>
+  </record>
+
+  <!-- Camping Place -->
+
+  <record id="ir_ui_view_campingplaceview0" model="ir.ui.view">
+    <field name="name">Camping place map view</field>
+    <field name="model">camping.place</field>
+    <field name="arch" type="xml">
+      <geoengine>
+        <field name="display_name" select="1" />
+        <field name="actual_state" select="1" />
+        <field name="x_the_geom"/>
+      </geoengine>
+    </field>
+    <!-- <field eval="16" name="priority"/> -->
+  </record>
+
+  <record id="geoengine_raster_layer_campingplace_osm" model="geoengine.raster.layer">
+    <field name="raster_type">osm</field>
+    <field name="name">Open Street Map</field>
+    <field name="view_id" ref="ir_ui_view_campingplaceview0"/>
+    <field eval="0" name="overlay"/>
+  </record>
+
+  <!-- Camping Parc -->
+
+  <record id="ir_ui_view_campingparcview0" model="ir.ui.view">
+    <field name="name">Camping parc map view</field>
+    <field name="model">camping.parc</field>
+    <field name="arch" type="xml">
+      <geoengine>
+        <field name="parc_no" select="1" />
+        <field name="camping_place_name" select="1" />
+        <field name="x_the_geom"/>
+      </geoengine>
+    </field>
+  </record>
+  <record id="geoengine_raster_layer_campingparc_osm" model="geoengine.raster.layer">
+    <field name="raster_type">osm</field>
+    <field name="name">Open Street Map</field>
+    <field name="view_id" ref="ir_ui_view_campingparcview0"/>
+    <field eval="0" name="overlay"/>
+  </record>
+
+</odoo>
